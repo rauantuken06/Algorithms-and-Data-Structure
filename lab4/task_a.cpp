@@ -41,7 +41,7 @@ bool check(string s, Node* node){
 int main(){
     int n, m, x;
     string s;
-    Node* root=NULL;
+    Node* root=nullptr;
 
     cin>>n>>m;
 
