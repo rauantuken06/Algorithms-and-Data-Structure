@@ -69,6 +69,9 @@ int main(){
                 isThere=true;
             }
         }
+        if(isThere!=true){
+            cout<<-1<<"\n";
+        }
     }
 
     return 0;
