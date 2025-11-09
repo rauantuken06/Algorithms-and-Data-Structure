@@ -35,7 +35,7 @@ void compute_prefixes(const string& s){
 unsigned long long get_substring_hash1(int l, int r, int n){
     unsigned long long hash = prefixes1[r];
     if(l > 0){
-        hash = (hash + quotient1 + prefixes1[l - 1]) % quotient1;
+        hash = (hash + quotient1 - prefixes1[l - 1]) % quotient1;
     }
     hash = (hash * product_powers1[n - r - 1]) % quotient1;
     return hash;
