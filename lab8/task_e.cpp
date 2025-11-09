@@ -2,25 +2,25 @@
 #include <string>
 using namespace std;
 
+const long long MAX_N = 1000005;
 const int product = 2;
-const long long quotient = 1000000007;
-const long long max_n = 1000005;
-unsigned long long product_powers[max_n];
+unsigned long long product_powers[MAX_N];
+const long long quotient = 1e18;
 
-void compute_powers(int n){
+void compute_powers(int size){
     product_powers[0] = 1;
-    for(int i = 1; i < n; i++){
-        product_powers[i] = (product_powers[i - 1] * product) % quotient;
+    for(int i = 1; i <= size; i++){
+        product_powers[i] = (product_powers[i - 1] * product);
     }
 }
 
-string restore_string(unsigned long long arr[], int n){
+string restore_the_string(unsigned long long arr[], int size){
     string word = "";
-    word+=char('a' + arr[0]);
-    for(int i = 1; i < n; i++){
-        int diff = arr[i] - arr[i - 1];
-        int value = diff / product_powers[i];
-        word += ('a' + value);
+    word += char('a' + arr[0]);
+    for(int i = 1; i < size; i++){
+        unsigned long long difference = arr[i] - arr[i - 1];
+        unsigned long long value = difference / product_powers[i];
+        word += char('a' + value);
     }
     return word;
 }
@@ -34,7 +34,7 @@ int main(){
     }
 
     compute_powers(n);
-    cout<<restore_string(arr, n);
+    cout<<restore_the_string(arr, n);
 
     return 0;
 }
