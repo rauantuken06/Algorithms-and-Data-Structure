@@ -1,13 +1,11 @@
 #include <iostream>
 using namespace std;
 
-const int MAX_N = 5005;
-const int Q_SIZE = 200000;
-int adjacency[MAX_N][MAX_N];
-int n;
+const int MAX_N = 200005;
+const int MAX_M = 400005;
 
 struct Queue{
-    pair<int, int> tipo_queue[Q_SIZE];
+    pair<int, int> tipo_queue[MAX_N];
     int queue_left;
     int queue_right;
 
@@ -37,18 +35,23 @@ struct Queue{
 
 struct Graph{
     bool color[MAX_N];
+    int head[MAX_N];
+    int to[MAX_M];
+    int next_idx[MAX_M];
+    int edge_counter;
+    bool visited[MAX_N];
 
     Graph(){
-        for(int i = 0; i < n; i++){
-            for(int j = 0; j < n; j++){
-                adjacency[i][j] = 0;
-            }
+        for(int i = 0; i < MAX_N; i++){
+            head[i] = 0;
         }
     }
 
-    void add_edge(int a, int b){
-        adjacency[a][b] = 1;
-        adjacency[b][a] = 1;
+    void add_edge(int u, int v){
+        to[edge_counter] = v;
+        edge_counter++;
+        next_idx[edge_counter] = head[u];
+        head[u] = edge_counter;
     }
 
     void change_color_to_red(int vertex){
@@ -56,14 +59,17 @@ struct Graph{
     }
 
     int bfs(int start){
+        for(int i = 0; i < MAX_N; i++){
+            visited[i] = false;
+        }
+
         if(color[start] == true){
             return 0;
         }
 
-        bool visited[n] = {false};
-        visited[start] = true;
         Queue ochered;
         ochered.push(start, 0);
+        visited[start] = true;
 
         while(!ochered.isEmpty()){
             pair<int, int> current = ochered.front();
@@ -71,13 +77,14 @@ struct Graph{
             int current_node = current.first;
             int current_dist = current.second;
 
-            for(int i = 0; i < n; i++){
-                if(adjacency[current_node][i] == 1 && visited[i] == false){
-                    visited[i] = true;
-                    if(color[i] == true){
+            for(int i = head[current_node]; i != 0; i = next_idx[i]){
+                int u = to[i];
+                if(visited[u] == false){
+                    visited[u] = true;
+                    if(color[u] == true){
                         return current_dist + 1;
                     }
-                    ochered.push(i, current_dist + 1);
+                    ochered.push(u, current_dist + 1);
                 }
             }
         }
@@ -86,7 +93,7 @@ struct Graph{
 };
 
 int main(){
-    int m, queries;
+    int n, m, queries;
     cin >> n >> m >> queries;
 
     Graph graph;
