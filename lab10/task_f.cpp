@@ -1,97 +1,108 @@
 #include <iostream>
 using namespace std;
 
-const int MAX = 100005;
-const int MAX_EDGES = 200005;
-int head[MAX];
-int to[MAX_EDGES];
-int next_edge[MAX_EDGES];
-int edge_count = 0;
+const int MAX_N = 100005;
+const int MAX_M = 200005;
 
-bool visited[MAX];
+struct Queue{
+    pair<int, int> tipo_queue[MAX_N];
+    int queue_left;
+    int queue_right;
 
-struct Queue {
-    int q[MAX];
-    int ql, qr;
-
-    Queue() {
-        ql = 0;
-        qr = 0;
+    Queue(){
+        queue_left = 0;
+        queue_right = 0;
     }
 
-    void push(int x) {
-        q[qr++] = x;
+    void push(int node, int distance){
+        pair<int, int> for_put = make_pair(node, distance);
+        tipo_queue[queue_right] = for_put;
+        queue_right++;
     }
 
-    int front() {
-        return q[ql];
+    pair<int, int> front(){
+        return tipo_queue[queue_left];
     }
 
-    void pop() {
-        ql++;
+    void pop(){
+        queue_left++;
     }
 
-    bool isEmpty() {
-        return ql == qr;
+    bool isEmpty(){
+        return queue_left == queue_right;
     }
 };
 
-void addEdge(int u, int v) {
-    to[edge_count] = v;
-    next_edge[edge_count] = head[u];
-    head[u] = edge_count;
-    edge_count++;
-}
+struct Graph{
+    int head[MAX_N];
+    int to[MAX_M];
+    int nextik[MAX_M];
+    int edge_counter;
 
-bool bfs(int s, int f, int n) {
-    for (int i = 1; i <= n; i++)
-        visited[i] = false;
+    bool visited[MAX_N];
 
-    Queue q;
-    q.push(s);
-    visited[s] = true;
-
-    while (!q.isEmpty()) {
-        int v = q.front();
-        q.pop();
-
-        if (v == f)
-            return true;
-
-        int e = head[v];
-        while (e != -1) {
-            int u = to[e];
-            if (!visited[u]) {
-                visited[u] = true;
-                q.push(u);
-            }
-            e = next_edge[e];
+    Graph(){
+        edge_counter = 0;
+        for(int i = 0; i < MAX_N; i++){
+            visited[i] = false;
         }
     }
-    return false;
-}
 
-int main() {
+    void add_edges(int u, int v){
+        ++edge_counter;
+        to[edge_counter] = v;
+        nextik[edge_counter] = head[u];
+        head[u] = edge_counter;
+    }
+
+    bool bfs(int from, int to){
+        Queue ochered;
+        ochered.push(from, 0);
+        visited[from] = true;
+
+        while(!ochered.isEmpty()){
+            pair<int, int> current = ochered.front();
+            ochered.pop();
+            int current_node = current.first;
+            int current_distance = current.second;
+
+            if(current_node == to){
+                return true;
+            }
+
+            for(int i = head[current_node]; i != 0; i = nextik[i]){
+                int u = this->to[i];
+                if(visited[u] == false){
+                    ochered.push(u, current_distance + 1);
+                    visited[u] = true;
+                }
+            }
+        }
+        return false;
+    }
+};
+
+int main(){
     int n, m;
     cin >> n >> m;
 
-    for (int i = 1; i <= n; i++)
-        head[i] = -1;
-
-    for (int i = 0; i < m; i++) {
-        int x, y;
-        cin >> x >> y;
-        addEdge(x, y);
-        addEdge(y, x);
+    Graph graph;
+    for(int i = 0; i < m; i++){
+        int vertex1, vertex2;
+        cin >> vertex1 >> vertex2;
+        graph.add_edges(vertex1, vertex2);
+        graph.add_edges(vertex2, vertex1);
     }
 
-    int s, f;
-    cin >> s >> f;
+    int from, to;
+    cin >> from >> to;
 
-    if (bfs(s, f, n))
-        cout << "YES" << "\n";
-    else
-        cout << "NO" << "\n";
+    if(graph.bfs(from, to)){
+        cout << "YES\n";
+    }
+    else{
+        cout << "NO\n";
+    }
 
     return 0;
 }
