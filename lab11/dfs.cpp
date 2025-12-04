@@ -2,23 +2,43 @@
 #include <vector>
 using namespace std;
 
-void dfsRec(vector<vector<int>> &adj, vector<bool> &visited, int s, vector<int> &res){
-    visited[s] = true;
+const int MAX_N = 100;
+vector<int> adjacency_list[MAX_N];
+bool visited[MAX_N];
 
-    res.push_back(s);
+void DFS(int v){
+    // Mark current vertex as visited.
+    visited[v] = true;
+    cout << v << " ";
 
-    //Recursively visit all adjacent vertices that are not visited yet
-
-    for(int i : adj[s]){
-        if(visited[i] == false){
-            dfsRec(adj, visited, i, res);
+    // Visit all neighbors
+    for(int i = 0; i < adjacency_list[v].size(); i++){
+        int u = adjacency_list[v][i];
+        if(!visited[u]){
+            DFS(u);
         }
     }
 }
 
-vector<int> DFS(vector<vector<int>> &adj){
-    vector<bool> visited(adj.size(), false);
-    vector<int> res;
-    dfsRec(adj, visited, 0, res);
-    return res;
+int main(){
+    int n, m;
+    cin >> n >> m;
+
+    for(int i = 0; i < n; i++){
+        visited[i] = false;
+    }
+
+    for(int i = 0; i < m; i++){
+        int u, v;
+        cin >> u >> v;
+
+        adjacency_list[u].push_back(v);
+        adjacency_list[v].push_back(u);
+    }
+
+    cout << "DFS traversal: ";
+    DFS(0);
+    cout << "\n";
+
+    return 0;
 }
